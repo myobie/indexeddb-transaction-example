@@ -132,7 +132,7 @@ $ npm start
 ```
 
 After it opens a browser window then open a console and you can iteract
-with the `db` variable that is handily attacked to `window`.
+with the `db` variable that is handily attached to `window`.
 
 Some examples to try:
 
@@ -173,7 +173,7 @@ and everything will work out. This is one of the primary reasons I went
 throught his exercise: **I want to know for sure that I can use the same
 database in multiple processes.**
 
-This is especially important for application created using [Electron][]
+This is especially important for applications created using [Electron][]
 since each window is it's own process and doing any kind of background
 network sync or multi-window application would mean sharing the
 database.
