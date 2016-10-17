@@ -5,15 +5,17 @@ class Request {
   }
 
   run (cb) {
-    try {
-      this._request = this.factory()
-    } catch (e) {
-      cb(e)
-      return
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        this._request = this.factory()
+      } catch (e) {
+        cb(e)
+        return
+      }
 
-    this._request.onerror = e => cb(e)
-    this._request.onsuccess = e => cb(null, e.target.result)
+      this._request.onerror = e => reject(e)
+      this._request.onsuccess = e => resolve(e.target.result)
+    })
   }
 }
 

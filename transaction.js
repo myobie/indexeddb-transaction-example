@@ -53,14 +53,12 @@ class Transaction {
           const value = request.value
           self.then(() => resolve(value))
         } else {
-          request.value.run((err, result) => {
-            if (err) {
+          request.value.run()
+            .then(result => next(result))
+            .catch(err => {
               self.abort()
               reject(err)
-            } else {
-              next(result)
-            }
-          })
+            })
         }
       }
 
