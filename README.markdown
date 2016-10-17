@@ -102,4 +102,89 @@ which are always handled in the `onsuccess` on the previous request.
 Since `yield` allows for precise control flow, it's possible to do all
 this without ever letting the javascript vm go to the "next tick."
 
+If you want to see this break down you can simply allow a next tick:
 
+```js
+const promise = db.transaction(['items'], 'rw').run(function* (tx) {
+  const items = tx.table('items')
+  const data = yield items.get('Milk')
+  setTimeout(() => {
+    data.amount += 1
+    yield items.put(data)
+  }, 10)
+})
+
+promise
+  .then(data => console.log(data))
+  .catch(e => console.error(e))
+```
+
+When the second request happens it will error because the transaction is
+now closed. (Also, this would change the api where a simple `return` at
+the end is all that is needed to return a final value.)
+
+## Code in this repo
+
+`index.js` is the entrypoint. You can startup a server using:
+
+```sh
+$ npm start
+```
+
+After it opens a browser window then open a console and you can iteract
+with the `db` variable that is handily attacked to `window`.
+
+Some examples to try:
+
+```js
+logPromise(db.tables.items.count())
+logPromise(db.tables.items.add({ name: 'Milk' })
+logPromise(db.tables.items.add({ name: 'Cheese' })
+logPromise(db.tables.items.add({ name: 'Eggs' })
+logPromise(db.tables.items.count())
+```
+
+In the example code every item is given a `revision` property which is
+set to a number. The `update` function on `Table` requires one to
+provide the current `revision` value to update any record.
+
+Here is an example:
+
+```js
+// assuming the id of an item is 'abc' (look in the storage inspector to
+// find an id of an existing item) and the current revision is 1
+
+logPromise(db.tables.items.update('abc', 1, { name: 'Sony Playstation' }))
+// will succeed and now the revision on disk will be 2
+
+logPromise(db.tables.items.update('abc', 1, { name: 'XBox' }))
+// will fail, because the provided 1 doesn't match the new revision on disk
+```
+
+This is an example of "compare and set" and is something I find very
+useful for a lot of applications.
+
+## Multiple processes
+
+Many online have proposed never to use the same indexedDB database in
+multiple processes (tabs), but I don't see a problem. If one uses the
+transactions appropriately then the database will be locked correctly
+and everything will work out. This is one of the primary reasons I went
+throught his exercise: **I want to know for sure that I can use the same
+database in multiple processes.**
+
+This is especially important for application created using [Electron][]
+since each window is it's own process and doing any kind of background
+network sync or multi-window application would mean sharing the
+database.
+
+[Electron]: http://electron.atom.io
+
+A lot of libraries will abort opening an already opened database and
+even recommend the developer to `window.close()` if that happens.
+IndexedDB can handle it, IMHO.
+
+Also, while I do prefer promises over the insane amount of callbacks
+that indexedDB provides, I do not want to change the basic API of
+indexedDB too far from where it is now. My goal is just to make it very
+clear for how long a transaction is open and useful.
