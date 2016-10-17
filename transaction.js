@@ -53,12 +53,16 @@ class Transaction {
           const value = request.value
           self.then(() => resolve(value))
         } else {
-          request.value.run()
-            .then(result => next(result))
-            .catch(err => {
-              self.abort()
-              reject(err)
-            })
+          if (request.value.isRequest) {
+            request.value.run()
+              .then(result => next(result))
+              .catch(err => {
+                self.abort()
+                reject(err)
+              })
+          } else {
+            reject(new Error('yielded something that was not a Request'))
+          }
         }
       }
 
