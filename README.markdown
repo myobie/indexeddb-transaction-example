@@ -31,13 +31,13 @@ However, transactions in indexedDB are not based on closures or anything
 like that: you are not in control of when the transaction is closed. A
 transaction is closed when the browser moves on to a "next tick."
 
-At first, this made me think that this kind of "holding the transaction
+At first, this made me think that these kind of "holding the transaction
 open" operations were impossible. But it turns out one can continue
 using the same transaction over and over, but only at one specific time:
 `onsuccess`.
 
 Anytime one tries to query the database it's called a "request." If one
-were to issue another request of any time in the `onsuccess` callback of
+were to issue another request of any kind in the `onsuccess` callback of
 any existing request, then the original transaction of the original
 request will be used. Yeah.
 
@@ -72,7 +72,7 @@ getRequest.onsuccess = e => {
 ```
 
 Thanks to fat arrows that code isn't as long as it could be. While this
-particular example might seem like it is could be tolerable things get
+particular example might seem like it could be tolerable things get
 super hinky when trying to compare in one objectStore before writing
 into another. Also, this code is super hard to wrap into a function or
 make generic in any way.
@@ -100,6 +100,6 @@ promise
 The basic idea is to provide a generator function that yields requests
 which are always handled in the `onsuccess` on the previous request.
 Since `yield` allows for precise control flow, it's possible to do all
-this without ever letting the javascript vm go to then "next tick."
+this without ever letting the javascript vm go to the "next tick."
 
 
