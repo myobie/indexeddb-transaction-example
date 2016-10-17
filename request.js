@@ -4,12 +4,12 @@ class Request {
     this._request = null
   }
 
-  run (cb) {
+  run () {
     return new Promise((resolve, reject) => {
       try {
         this._request = this.factory()
       } catch (e) {
-        cb(e)
+        reject(e)
         return
       }
 
