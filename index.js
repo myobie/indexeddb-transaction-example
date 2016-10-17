@@ -21,7 +21,7 @@ function openDb () {
     let request
 
     try {
-      request = window.indexedDB.open('transaction-test', 1)
+      request = window.indexedDB.open('primary', 1)
     } catch (e) {
       _reject(new Error(e))
       return
@@ -46,11 +46,15 @@ function openDb () {
         return
       }
 
-      try {
-        const _items = _db.createObjectStore('items', { keyPath: 'id' })
-        _items.createIndex('name', 'name', { unique: false })
-      } catch (e) {
-        _reject(new Error(e))
+      const oldVersion = e.oldVersion || 0
+
+      if (oldVersion < 1) {
+        try {
+          const _items = _db.createObjectStore('items', { keyPath: 'id' })
+          _items.createIndex('name', 'name', { unique: false })
+        } catch (e) {
+          _reject(new Error(e))
+        }
       }
     }
 
