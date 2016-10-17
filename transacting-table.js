@@ -7,27 +7,27 @@ class TransactingTable {
     this.objectStore = objectStore
   }
 
-  get (id) {
+  getRequest (id) {
     return new Request(() => this.objectStore.get(id))
   }
 
-  count () {
+  countRequest () {
     return new Request(() => this.objectStore.count())
   }
 
-  add (id) {
+  addRequest (id) {
     return new Request(() => this.objectStore.add(id))
   }
 
-  put (data) {
+  putRequest (data) {
     return new Request(() => this.objectStore.put(data))
   }
 
-  delete (id) {
+  deleteRequest (id) {
     return new Request(() => this.objectStore.delete(id))
   }
 
-  clear () {
+  clearRequest () {
     return new Request(() => this.objectStore.clear())
   }
 }

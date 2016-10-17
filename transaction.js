@@ -2,7 +2,7 @@ const { TransactingTable } = require('./transacting-table')
 
 class Transaction {
   constructor (tableNames, tx) {
-    this.tx = tx
+    this._tx = tx
     this.tables = {}
 
     for (let name of tableNames) {
@@ -22,7 +22,7 @@ class Transaction {
   }
 
   abort () {
-    this.tx.abort()
+    this._tx.abort()
   }
 
   then (cb) {

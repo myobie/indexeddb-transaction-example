@@ -10,7 +10,7 @@ class Table {
     const name = this.name
 
     return this.db.transaction([name], 'r').run(function* (tx) {
-      return yield tx.table(name).get(id)
+      return yield tx.table(name).getRequest(id)
     })
   }
 
@@ -18,7 +18,7 @@ class Table {
     const name = this.name
 
     return this.db.transaction([name], 'r').run(function* (tx) {
-      return yield tx.table(name).count()
+      return yield tx.table(name).countRequest()
     })
   }
 
@@ -36,7 +36,7 @@ class Table {
     const name = this.name
 
     return this.db.transaction([name], 'rw').run(function* (tx) {
-      yield tx.table(name).add(item)
+      yield tx.table(name).addRequest(item)
       return item
     })
   }
@@ -55,7 +55,7 @@ class Table {
     return this.db.transaction([name], 'rw').run(function* (tx) {
       const table = tx.table(name)
 
-      let data = yield table.get(id)
+      let data = yield table.getRequest(id)
 
       let mergedData
 
@@ -65,7 +65,7 @@ class Table {
         throw new Error(`revision mismatch: currentRevision is '${currentRevision}' while revision on disk is '${data.revision}'`)
       }
 
-      yield table.put(mergedData)
+      yield table.putRequest(mergedData)
 
       return mergedData
     })
@@ -75,7 +75,7 @@ class Table {
     const name = this.name
 
     return this.db.transaction([name], 'rw').run(function* (tx) {
-      yield tx.table(name).put(data)
+      yield tx.table(name).putRequest(data)
       return data
     })
   }
@@ -84,7 +84,7 @@ class Table {
     const name = this.name
 
     return this.db.transaction([name], 'rw').run(function* (tx) {
-      yield tx.table(name).delete(id)
+      yield tx.table(name).deleteRequest(id)
       return true
     })
   }

@@ -7,6 +7,12 @@ openDb()
     throw e
   })
 
+window.logPromise = promise => {
+  promise
+    .then(r => console.log(r))
+    .catch(e => console.error(e))
+}
+
 const { Database } = require('./database')
 
 function openDb () {

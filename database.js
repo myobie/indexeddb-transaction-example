@@ -10,6 +10,10 @@ class Database {
     }, {})
   }
 
+  table (name) {
+    return this.tables[name]
+  }
+
   transaction (tableNames, mode = 'r') {
     let _mode
     if (mode === 'rw') {
