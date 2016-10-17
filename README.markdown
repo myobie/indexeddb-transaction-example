@@ -93,7 +93,7 @@ const promise = db.transaction(['items'], 'rw').run(function* (tx) {
 })
 
 promise
-  .then(data => console.log(data)
+  .then(data => console.log(data))
   .catch(e => console.error(e))
 ```
 
